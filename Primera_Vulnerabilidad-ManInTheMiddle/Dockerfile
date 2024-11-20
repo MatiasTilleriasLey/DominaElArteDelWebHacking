@@ -11,7 +11,6 @@ RUN apt-get update && \
 
 # Modifica la configuración de Apache para incluir index.php como archivo predeterminado
 RUN echo "<IfModule dir_module>\n    DirectoryIndex index.php index.html\n</IfModule>" > /etc/apache2/mods-enabled/dir.conf
-
 # Copia los archivos del proyecto al directorio de Apache
 COPY . /var/www/html/
 
@@ -24,3 +23,4 @@ EXPOSE 80
 
 # Comando para iniciar Apache en primer plano
 CMD ["apachectl", "-D", "FOREGROUND"]
+RUN service apache2 restart
