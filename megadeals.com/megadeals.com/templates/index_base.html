@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <style>
+        .header {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav ul {
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.nav ul li {
+    margin: 0 15px;
+}
+
+.nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.nav ul li a:hover {
+    color: #007bff;
+}
+
+.register-banner {
+    text-align: center;
+    background-color: #007bff;
+    color: white;
+    padding: 20px 15px;
+    margin-top: 10px;
+    border-radius: 8px;
+    font-family: 'Arial', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.register-banner p {
+    font-size: 1.2em;
+    margin: 0 0 10px;
+}
+
+.btn-register {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    padding: 10px 25px;
+    font-size: 1em;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-register:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <title>MegaDeals Store</title>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">MegaDeals Store</h1>
+            <nav class="nav">
+                <ul>
+                    <li><a href="{{url_for('index')}}">Inicio</a></li>
+                    <li><a href="#products">Productos</a></li>
+                    <li><a href="#about">Nosotros</a></li>
+                    <li><a href="#contact">Contacto</a></li>
+                    <li><a href="#" class="btn">Ver Todos los Productos</a></li>
+                </ul>
+            </nav>
+            {% if is_index %}
+            <div class="register-banner">
+                <p>🎉 <strong>¡Sé parte de nuestra comunidad exclusiva!</strong> Descubre ofertas especiales y novedades
+                    increíbles. 💎</p>
+                <a href="{{url_for('registerSite')}}" class="btn btn-register">Quiero Registrarme</a>
+                <a href="login.html" class="btn btn-register">Ya tengo una cuenta</a>
+            </div>
+            {% endif %}
+        </div>
+    </header>
+        {% block sectionOne %}
+        <!-- Aquí va el contenido específico de cada página -->
+        {% endblock %}
+        
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 MegaDeals Store. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

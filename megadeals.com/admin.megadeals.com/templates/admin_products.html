@@ -1,0 +1,203 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Gestión de Productos</h2>
+
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Foto</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="product-table-body">
+            {% for product in products %}
+            <tr data-product-id="{{ product.id }}">
+                <td><img src="{{ product.photo_url }}" alt="{{ product.name|safe }}" class="img-thumbnail" style="width: 100px;"></td>
+                <td class="editable" data-field="name">{{ product.name|safe }}</td>
+                <td class="editable" data-field="description">{{ product.description|safe }}</td>
+                <td class="editable" data-field="price">${{ product.price }}</td>
+                <td class="editable" data-field="stock">{{ product.stock }}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm edit-button">
+                        <i class="bi bi-pencil"></i> Editar
+                    </button>
+                    <button class="btn btn-danger btn-sm delete-button">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Botón para agregar un nuevo producto -->
+    <div class="text-center mt-4">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            <i class="bi bi-plus-circle"></i> Agregar Producto
+        </button>
+    </div>
+</div>
+
+<!-- Modal para agregar producto -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductModalLabel">Agregar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-product-form" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="productName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productDescription" class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="productDescription" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productPrice" class="form-label">Precio</label>
+                        <input type="number" class="form-control" id="productPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productStock" class="form-label">Stock</label>
+                        <input type="number" class="form-control" id="productStock" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productPhoto" class="form-label">Foto</label>
+                        <input type="file" class="form-control" id="productPhoto" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Editar producto
+        document.querySelectorAll('.edit-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('tr');
+                const isEditing = row.classList.toggle('editing');
+
+                if (isEditing) {
+                    this.innerHTML = '<i class="bi bi-save"></i> Guardar';
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-success');
+                    row.querySelectorAll('.editable').forEach(cell => {
+                        const value = cell.innerText;
+
+                        // Si el campo es "price", elimina el símbolo $ al iniciar la edición
+                        if (cell.dataset.field === 'price') {
+                            cell.innerHTML = `<input type="text" class="form-control" value="${value.replace('$', '').trim()}">`;
+                        } else {
+                            cell.innerHTML = `<input type="text" class="form-control" value="${value}">`;
+                        }
+                    });
+                } else {
+                    const productId = row.dataset.productId;
+                    const updatedData = new URLSearchParams();
+
+                    row.querySelectorAll('.editable').forEach(cell => {
+                        const input = cell.querySelector('input');
+                        if (input) {
+                            const fieldName = cell.dataset.field;
+                            const newValue = input.value;
+
+                            // Si el campo es "price", asegura que solo envíe números
+                            if (fieldName === 'price') {
+                                updatedData.append(fieldName, newValue.replace(/[^\d.]/g, ''));
+                            } else {
+                                updatedData.append(fieldName, newValue);
+                            }
+
+                            cell.innerText = fieldName === 'price' ? `$${newValue}` : newValue;
+                        }
+                    });
+
+                    fetch(`/update-product/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: updatedData.toString()
+                    })
+                    .then(response => {
+                        if (response.ok) return response.json();
+                        throw new Error('Error al guardar los cambios');
+                    })
+                    .catch(error => console.error('Error al guardar:', error));
+
+                    this.innerHTML = '<i class="bi bi-pencil"></i> Editar';
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-primary');
+                }
+            });
+        });
+
+        // Eliminar producto
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('tr');
+                const productId = row.dataset.productId;
+
+                fetch(`/delete-product/${productId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) row.remove();
+                        else throw new Error('Error al eliminar el producto');
+                    })
+                    .catch(error => console.error('Error al eliminar:', error));
+            });
+        });
+
+        // Agregar producto
+        const addProductForm = document.getElementById('add-product-form');
+        addProductForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(addProductForm);
+
+            fetch('/add-product', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) return response.json();
+                throw new Error('Error al agregar el producto');
+            })
+            .then(data => {
+                const tableBody = document.getElementById('product-table-body');
+                const newRow = document.createElement('tr');
+                newRow.dataset.productId = data.id;
+                newRow.innerHTML = `
+                    <td><img src="${data.photo_url}" alt="${data.name}" class="img-thumbnail" style="width: 100px;"></td>
+                    <td class="editable" data-field="name">${data.name}</td>
+                    <td class="editable" data-field="description">${data.description}</td>
+                    <td class="editable" data-field="price">$${data.price}</td>
+                    <td class="editable" data-field="stock">${data.stock}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm edit-button">
+                            <i class="bi bi-pencil"></i> Editar
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-button">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(newRow);
+                bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
+                addProductForm.reset();
+            })
+            .catch(error => console.error('Error al agregar producto:', error));
+        });
+    });
+</script>
+{% endblock %}

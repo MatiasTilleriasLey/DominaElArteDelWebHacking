@@ -1,0 +1,44 @@
+
+{% extends 'admin_base.html' %}
+{% block title %}MegaDeals - {% endblock %}
+
+{% block content %}
+        <!-- Bienvenida -->
+        <section class="welcome text-center mb-4">
+            <h2>¡Bienvenida, {{ name }}!</h2>
+            <p>Utiliza el panel de administración para gestionar la tienda MegaDeals.</p>
+        </section>
+
+        <!-- Opciones del Administrador -->
+        <section class="admin-options">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Gestión de Productos</h5>
+                            <p class="card-text">Añade, edita o elimina productos de la tienda.</p>
+                            <a href="/admin/products" class="btn btn-primary">Ir a Productos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Gestión de Usuarios</h5>
+                            <p class="card-text">Controla los permisos y la información de los usuarios.</p>
+                            <a href="/admin/users" class="btn btn-primary">Ir a Usuarios</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Reportes</h5>
+                            <p class="card-text">Consulta el rendimiento y las estadísticas de la tienda.</p>
+                            <a href="/admin/reports" class="btn btn-primary">Ver Reportes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endblock %}

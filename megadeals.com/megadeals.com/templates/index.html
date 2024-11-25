@@ -1,0 +1,80 @@
+
+{% extends 'index_base.html' %}
+{% block sectionOne %}
+<!-- Aquí va el contenido específico de cada página -->
+
+<section id="home" class="hero">
+    <div class="container">
+        <h2>¡Las mejores ofertas están aquí!</h2>
+        <p>Descubre productos increíbles a precios irresistibles.</p>
+        <a href="#products" class="btn">Explorar Productos</a>
+    </div>
+</section>
+
+<section id="products" class="products">
+    <div class="container">
+        <h2>Productos Destacados</h2>
+        <div class="product-list">
+            {% for product in products %}
+            <div class="product">
+                <img src="https://admin.megadeals.com{{ product.photo_url }}" alt="{{ product.name|safe }}">
+                <h3>{{ product.name|safe }}</h3>
+                <p>${{ product.price }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<section id="about" class="about">
+    <div class="container">
+        <h2>Sobre Nosotros</h2>
+        <p class="about-text">
+            En <strong>MegaDeals Store</strong>, nuestra misión es ofrecer productos de calidad a los mejores
+            precios del mercado.
+            Nos apasiona brindar una experiencia de compra única, asegurando que encuentres todo lo que necesitas en
+            un solo lugar.
+        </p>
+        <p class="about-text">
+            Con un equipo comprometido y una visión clara, nos esforzamos por superar tus expectativas. ¡Gracias por
+            elegirnos!
+        </p>
+    </div>
+</section>
+<section id="team" class="team">
+    <div class="container">
+        <h2>Conoce a Nuestro Equipo</h2>
+        <div class="team-list">
+            <div class="team-member">
+                <img src="https://admin.megadeals.com/static/images/profiles/sofia_martinez.webp" alt="Sofía Martínez">
+                <h3>Sofía Martínez</h3>
+                <p>Gerente General</p>
+                <p>Sofía lidera con pasión nuestro equipo, asegurando que cada detalle de la tienda funcione a la
+                    perfección.</p>
+                <p>Email: <a href="mailto:sofia.martinez@megadeals.com">sofia.martinez@megadeals.com</a></p>
+            </div>
+            <div class="team-member">
+                <img src="https://admin.megadeals.com/static/images/profiles/carlos_gomez.webp" alt="Carlos Gómez">
+                <h3>Carlos Gómez</h3>
+                <p>Encargado de Logística</p>
+                <p>Carlos es quien garantiza que todos los productos lleguen a tiempo a nuestros clientes.</p>
+                <p>Email: <a href="mailto:carlos.gomez@megadeals.com">carlos.gomez@megadeals.com</a></p>
+            </div>
+            <div class="team-member">
+                <img src="https://admin.megadeals.com/static/images/profiles/ana_lopez.webp" alt="Ana López">
+                <h3>Ana López</h3>
+                <p>Especialista en Atención al Cliente</p>
+                <p>Ana está siempre lista para resolver tus dudas y ayudarte con cualquier consulta.</p>
+                <p>Email: <a href="mailto:ana.lopez@megadeals.com">ana.lopez@megadeals.com</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="contact" class="contact">
+    <div class="container">
+        <h2>Contacto</h2>
+        <p>¿Tienes alguna pregunta? Escríbenos a: <a href="mailto:contacto@megadeals.com">contacto@megadeals.com</a>
+        </p>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+version: '3.8'
+services:
+    web1:
+        image: flask:latest
+        container_name: megadeals.com
+        build:
+            context: ./megadeals.com
+        volumes:
+            - ./megadeals.com:/app
+        networks:
+            - web_network
+        expose:
+            - "5000"
+
+    web2:
+        image: flask:latest
+        container_name: admin.megadeals.com
+        build:
+            context: ./admin.megadeals.com
+        volumes:
+            - ./admin.megadeals.com:/app
+        networks:
+            - web_network
+        expose:
+            - "5000"
+
+    proxy:
+        image: nginx
+        container_name: nginx_proxy
+        volumes:
+            - ./nginx/:/etc/nginx/
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - web_network
+
+    dns:
+        image: andyshinn/dnsmasq
+        container_name: dns_server
+        ports:
+            - "53:53/udp"
+        volumes:
+            - ./dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+            - ./dnsmasq/resolv.dnsmasq:/etc/resolv.dnsmasq
+        networks:
+            - web_network
+
+    db:
+        image: mysql:8.0
+        container_name: megadeals_database
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: megadeals
+        volumes:
+            - db_data:/var/lib/mysql
+            - ./db-scripts:/docker-entrypoint-initdb.d
+        networks:
+            - web_network
+        expose:
+            - "3306"
+
+networks:
+    web_network:
+        driver: bridge
+volumes:
+    db_data:
+    certs: # Almacena certificados compartidos
